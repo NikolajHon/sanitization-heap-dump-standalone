@@ -39,7 +39,7 @@ services:
       - SANITIZER_SCAN_INTERVAL_MS=10000
     volumes:
       - heap-dumps:/heap/input
-      - 'C:/heap-dumps/output:/heap/output'
+      - '${OUTPUT_PATH}:/heap/output'
 
 volumes:
   heap-dumps:
