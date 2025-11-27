@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  app-a:
+    build:
+      context: ./ApplicationA
+      dockerfile: Dockerfile
+    container_name: app-a
+    ports:
+      - "8081:8080"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+HeapDumpOnOutOfMemoryError
+    volumes:
+      - heap-dumps:/heap/input
+
+  app-b:
+    build:
+      context: ./ApplicationB
+      dockerfile: Dockerfile
+    container_name: app-b
+    ports:
+      - "8082:8080"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+HeapDumpOnOutOfMemoryError
+    volumes:
+      - heap-dumps:/heap/input
+
+  heap-sanitizer:
+    build:
+      context: ./HeapDumpSanitizer
+      dockerfile: Dockerfile
+    container_name: heap-sanitizer
+    depends_on:
+      - app-a
+      - app-b
+    environment:
+      - SANITIZER_INPUT_DIR=/heap/input
+      - SANITIZER_OUTPUT_DIR=/heap/output
+      - SANITIZER_SCAN_INTERVAL_MS=10000
+    volumes:
+      - heap-dumps:/heap/input
+      - 'C:/heap-dumps/output:/heap/output'
+
+volumes:
+  heap-dumps:
