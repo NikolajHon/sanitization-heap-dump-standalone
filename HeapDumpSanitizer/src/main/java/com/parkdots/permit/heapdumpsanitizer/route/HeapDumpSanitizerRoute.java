@@ -25,6 +25,7 @@ public class HeapDumpSanitizerRoute extends RouteBuilder {
                 + "&initialDelay=2000"
                 + "&delay=5000"
                 + "&noop=false"
+                + "&delete=true"
                 + "&readLock=changed"
                 + "&readLockMinAge=15000"
                 + "&readLockCheckInterval=3000"

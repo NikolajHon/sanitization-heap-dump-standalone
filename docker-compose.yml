@@ -34,12 +34,24 @@ services:
       - app-a
       - app-b
     environment:
-      - SANITIZER_INPUT_DIR=/heap/input
-      - SANITIZER_OUTPUT_DIR=/heap/output
-      - SANITIZER_SCAN_INTERVAL_MS=10000
+      SANITIZER_INPUT_DIR: /heap/input
+      SANITIZER_OUTPUT_DIR: /heap/output
+      SANITIZER_SCAN_INTERVAL_MS: 10000
+
+      JAVA_TOOL_OPTIONS: >
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9010
+        -Dcom.sun.management.jmxremote.rmi.port=9010
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=127.0.0.1
+
+    ports:
+      - "9010:9010"
     volumes:
       - heap-dumps:/heap/input
       - 'C:/heap-dumps/output:/heap/output'
+
 
 volumes:
   heap-dumps:

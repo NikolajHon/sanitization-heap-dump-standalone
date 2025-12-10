@@ -14,4 +14,4 @@ WORKDIR /app
 
 COPY --from=build /build/target/*-SNAPSHOT.jar app-0.0.2.jar
 
-ENTRYPOINT ["java", "-jar", "app-0.0.2.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_TOOL_OPTIONS -jar app-0.0.2.jar"]

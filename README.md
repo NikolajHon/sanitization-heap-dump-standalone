@@ -42,3 +42,7 @@ docker compose down -v
 
 ## Result (sanitized)
 ![sanitized heap dump](source/img.png)
+
+
+## Result Jconsole (sanitized)
+![finish_process](source/finish_process.png)
