@@ -1,28 +1,27 @@
 package com.parkdots.permit.heapdumpsanitizer.route;
 
+import com.parkdots.permit.heapdumpsanitizer.config.AppProperties;
 import com.parkdots.permit.heapdumpsanitizer.service.HeapDumpToolProcessor;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HeapDumpSanitizerRoute extends RouteBuilder {
 
-    @Value("${sanitizer.input-dir:/heap/input}")
-    private String inputDir;
-
+    private final AppProperties appProperties;
     private final HeapDumpToolProcessor heapDumpToolProcessor;
 
-    public HeapDumpSanitizerRoute(HeapDumpToolProcessor heapDumpToolProcessor) {
+    public HeapDumpSanitizerRoute(AppProperties appProperties,
+                                  HeapDumpToolProcessor heapDumpToolProcessor) {
+        this.appProperties = appProperties;
         this.heapDumpToolProcessor = heapDumpToolProcessor;
     }
 
     @Override
     public void configure() {
 
-        from("file:" + inputDir +
+        from("file:" + appProperties.getInputDir() +
                 "?include=.*.hprof" +
-                "&noop=true" +
                 "&delete=true" +
                 "&initialDelay=2000" +
                 "&delay=5000")

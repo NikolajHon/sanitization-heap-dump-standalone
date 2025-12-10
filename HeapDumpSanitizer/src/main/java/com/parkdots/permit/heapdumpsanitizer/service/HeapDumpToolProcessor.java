@@ -1,5 +1,6 @@
 package com.parkdots.permit.heapdumpsanitizer.service;
 
+import com.parkdots.permit.heapdumpsanitizer.config.AppProperties;
 import com.paypal.heapdumptool.sanitizer.HeapDumpSanitizer;
 import com.paypal.heapdumptool.sanitizer.SanitizeCommand;
 import com.paypal.heapdumptool.sanitizer.SanitizeStreamFactory;
@@ -7,7 +8,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -20,8 +20,11 @@ public class HeapDumpToolProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(HeapDumpToolProcessor.class);
 
-    @Value("${sanitizer.output-dir:/heap/output}")
-    private String outputDir;
+    private final AppProperties appProperties;
+
+    public HeapDumpToolProcessor(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
 
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -31,17 +34,19 @@ public class HeapDumpToolProcessor implements Processor {
         }
 
         Path input = Paths.get(inputFile);
-        Path output = Paths.get(outputDir, input.getFileName().toString());
+        Path output = Paths.get(appProperties.getOutputDir(), input.getFileName().toString());
 
         LOG.info("Sanitizing heap dump: {} -> {}", input, output);
+
         SanitizeCommand command = new SanitizeCommand();
         command.setInputFile(input);
         command.setOutputFile(output);
 
-        SanitizeStreamFactory streamFactory = new SanitizeStreamFactory(command);
+        SanitizeStreamFactory factory = new SanitizeStreamFactory(command);
 
-        try (InputStream inputStream = streamFactory.newInputStream();
-             OutputStream outputStream = streamFactory.newOutputStream()) {
+        try (InputStream inputStream = factory.newInputStream();
+             OutputStream outputStream = factory.newOutputStream()) {
+
             HeapDumpSanitizer sanitizer = new HeapDumpSanitizer();
             sanitizer.setSanitizeCommand(command);
             sanitizer.setInputStream(inputStream);

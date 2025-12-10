@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: heap-dump-sanitizer
+
+sanitizer:
+  paths:
+    input-dir: /heap/input
+    output-dir: /heap/output
+    delete-original: true
+
+camel:
+  main:
+    run-controller: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,prometheus"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
