@@ -28,6 +28,7 @@ public class HeapDumpToolProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        LOG.info("Processing heap dump");
         String inputFile = exchange.getIn().getHeader("CamelFilePath", String.class);
         if (inputFile == null) {
             throw new IllegalStateException("CamelFilePath header missing");
